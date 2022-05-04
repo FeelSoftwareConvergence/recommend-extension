@@ -3,9 +3,14 @@
   "description": "this chrome extension program is recommending song based on your instargram.",
   "manifest_version": 3,
   "version": "0.1",
+  "permissions": [
+    "*://localhost:8000/*",
+    "*://instargram.com"
+  ],
   "content_scripts": [
     {
-      "matches" : ["http://localhost:8000/*"],
+      "matches" : ["http://localhost:8000/*","https://www.instagram.com/","https://twitter.com/home"],
+      "css": ["./style.css"],
       "js": ["./content.js"],
       "run_at": "document_end"
     }
