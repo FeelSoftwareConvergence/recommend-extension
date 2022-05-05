@@ -1,18 +1,34 @@
 {
-  "name": "Recommend Program",
-  "description": "this chrome extension program is recommending song based on your instargram.",
+  "name": "FSY",
   "manifest_version": 3,
   "version": "0.1",
+  "description": "Turns the page red when you click the icon",
   "permissions": [
-    "*://localhost:8000/*",
-    "*://instargram.com"
+    "storage",
+    "notifications"
   ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "icons": {
+    "300": "./icon/on.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
-      "matches" : ["http://localhost:8000/*","https://www.instagram.com/","https://twitter.com/home"],
-      "css": ["./style.css"],
-      "js": ["./content.js"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_end"
     }
-  ]
+  ],
+  "action": {
+    "default_icon": "./icon/off.png",
+    "default_popup": "./popup/popup.html"
+  }
 }
