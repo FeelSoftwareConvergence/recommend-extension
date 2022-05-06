@@ -5,7 +5,9 @@
   "description": "Turns the page red when you click the icon",
   "permissions": [
     "storage",
-    "notifications"
+    "notifications",
+    "scripting",
+    "*://*.google.com/"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -18,17 +20,15 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "<all_urls>"
-      ],
+      "matches": ["https://www.instagram.com/p/*"],
       "js": [
         "content.js"
       ],
-      "run_at": "document_end"
+      "run_at": "document_start"
     }
   ],
   "action": {
-    "default_icon": "./icon/off.png",
+    "default_icon": "./icon/on.png",
     "default_popup": "./popup/popup.html"
   }
 }
