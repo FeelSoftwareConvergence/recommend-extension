@@ -19,13 +19,6 @@
     "service_worker": "background.js"
   },
   "content_scripts": [
-    {
-      "matches": ["https://www.instagram.com/p/*"],
-      "js": [
-        "content.js"
-      ],
-      "run_at": "document_start"
-    }
   ],
   "action": {
     "default_icon": "./icon/on.png",
