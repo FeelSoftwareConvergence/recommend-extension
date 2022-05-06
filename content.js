@@ -14,4 +14,3 @@ function makeNotify(type, title, message, iconUrl) {
     })
 }
 
-alert("hello world");

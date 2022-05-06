@@ -1,4 +1,6 @@
-import * as core from "../core/core.js";
+if (typeof browser === "undefined") {
+    var browser = chrome;
+}
 //====== 변수 정의 ======
 
 
@@ -16,73 +18,92 @@ async function makeNotify(type, title, message, iconUrl) {
     })
 }
 
-async function sendOnOff(type) {
-    console.log("send msg");
-    return chrome.runtime.sendMessage('', {
-        type: type
-    })
-}
+//====== 실제 동작 정의 ======
+const activeBtn = document.querySelector(".form-check-input");
+const mainImg = document.getElementById("main img");
 
-function changeMainImg(toggle){
-    let img = document.getElementById("main img");
-    if (isChecked(toggle)) {
-        img.src = '../icon/on.png';
+browser.storage.sync.get(null, function(items) {
+    // Toggle button not supprted in Firefox
+    if (items == undefined) {
+        document.querySelector(".support-alert").innerText = `
+            해당 브라우저에서는 KLAS Helper 기능을 끌 수 없습니다.
+        `
+        activeBtn.checked = true;
+    } else if (items.currentState === undefined) {
+        browser.storage.sync.set({currentState: "ON"}).then();
+        chrome.runtime.sendMessage({
+            action: 'updateIcon',
+            value: "enabled"
+        }).then(r => console.log(r));
+        activeBtn.checked = true;
+    } else if (items.currentState === "OFF") {
+        chrome.runtime.sendMessage({
+            action: 'updateIcon',
+            value: "disabled"
+        }).then(r => console.log(r));
+        activeBtn.checked = false;
+    } else if (items.currentState === "ON") {
+        chrome.runtime.sendMessage({
+            action: 'updateIcon',
+            value: "enabled"
+        }).then(r => console.log(r));
+        activeBtn.checked = true;
+    }
+});
+
+
+activeBtn.onclick = function() {
+    if (activeBtn.checked) {
+        browser.storage.sync.set({currentState: "ON"})
+            .then(()=>{mainImg.src="../icon/origin_on.png"});
+        chrome.runtime.sendMessage({
+            action: 'updateIcon',
+            value: "enabled"
+        }).then(r => console.log(r));
     } else {
-        img.src = '../icon/off.png';
+        browser.storage.sync.set({currentState: "OFF"})
+            .then(()=>{mainImg.src="../icon/origin_off.png"});
+        chrome.runtime.sendMessage({
+            action: 'updateIcon',
+            value: "disabled"
+        }).then(r => console.log(r));
     }
 }
 
-function isChecked(toggle) {
-    return toggle.checked;
-}
+//버튼에 notify 기능 설정
+const notifyBtn = document.getElementById("btn notify");
 
-//====== 실제 동작 정의 ======
-{
-    // toggle onoff
-    const toggle = document.getElementById("toggle");
+notifyBtn.addEventListener('click', () => {
+    makeNotify('basic', "hello world", "this is test msg", "../icon/origin_on.png")
+        .then((res) => console.log(res.res))
+        .catch(() => console.log("notify fail"));
+});
 
-    toggle.addEventListener('click', () => {
-        changeMainImg(toggle);
-    });
-}
 
-{
-    //버튼에 notify 기능 설정
-    const notifyBtn = document.getElementById("btn notify");
+// 리스트 출력하기
+chrome.storage.sync.get('res')
+    .then((res) => {
+        console.log(res.res)
+        let arr = res.res;
+        let tbody = document.getElementById("tbody");
 
-    notifyBtn.addEventListener('click', () => {
-        makeNotify('basic', "hello world", "this is test msg", "./icon/on.png")
-            .then((res) => console.log(res.res))
-            .catch(() => console.log("notify fail"));
-    });
-}
+        // tr td 만들기
+        for (let i = 0; i < arr.length; i++) {
+            console.log(arr[i]);
+            let tr = document.createElement("tr");
+            let th = document.createElement("th");
+            let td1 = document.createElement("td");
+            let td2 = document.createElement("td");
 
-{
-    // 리스트 출력하기
-    chrome.storage.sync.get('res')
-        .then((res) => {
-            console.log(res.res)
-            let arr = res.res;
-            let tbody = document.getElementById("tbody");
+            th.setAttribute('scope', "row");
+            th.textContent = i.toString();
+            td1.textContent = arr[i].song_name;
+            td2.textContent = arr[i].recommend;
 
-            // tr td 만들기
-            for (let i = 0; i < arr.length; i++) {
-                console.log(arr[i]);
-                let tr = document.createElement("tr");
-                let th = document.createElement("th");
-                let td1 = document.createElement("td");
-                let td2 = document.createElement("td");
+            tr.append(th);
+            tr.append(td1);
+            tr.append(td2);
 
-                th.setAttribute('scope', "row");
-                th.textContent = i.toString();
-                td1.textContent = arr[i].song_name;
-                td2.textContent = arr[i].recommend;
-
-                tr.append(th);
-                tr.append(td1);
-                tr.append(td2);
-
-                tbody.append(tr);
-            }
-        })
-}
+            tbody.append(tr);
+        }
+    })

@@ -8,6 +8,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 )
 
+chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+    if (msg.action === "updateIcon") {
+        if (msg.value === "disabled") {
+            chrome.action.setIcon({
+                path: {"32": "./icon/off.png"}
+            });
+        } else {
+            chrome.action.setIcon({
+                path:{"48": "./icon/on.png"}
+            });
+        }
+        sendResponse("change icon is success");
+    }
+});
+
+
 // storage
 chrome.runtime.onInstalled.addListener(() => {
     // 연결되었을 때 초기값 설정 및 저장
