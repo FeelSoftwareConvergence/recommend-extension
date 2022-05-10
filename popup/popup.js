@@ -30,19 +30,22 @@ browser.storage.sync.get(null, function(items) {
         `
         activeBtn.checked = true;
     } else if (items.currentState === undefined) {
-        browser.storage.sync.set({currentState: "ON"}).then();
+        browser.storage.sync.set({currentState: "ON"})
+            .then(()=>{mainImg.src="../icon/origin_on.png"});
         chrome.runtime.sendMessage({
             action: 'updateIcon',
             value: "enabled"
         }).then(r => console.log(r));
         activeBtn.checked = true;
     } else if (items.currentState === "OFF") {
+        mainImg.src="../icon/origin_off.png"
         chrome.runtime.sendMessage({
             action: 'updateIcon',
             value: "disabled"
         }).then(r => console.log(r));
         activeBtn.checked = false;
     } else if (items.currentState === "ON") {
+        mainImg.src="../icon/origin_on.png"
         chrome.runtime.sendMessage({
             action: 'updateIcon',
             value: "enabled"
