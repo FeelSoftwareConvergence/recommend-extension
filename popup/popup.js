@@ -22,7 +22,7 @@ async function makeNotify(type, title, message, iconUrl) {
 const activeBtn = document.querySelector(".form-check-input");
 const mainImg = document.getElementById("main img");
 
-browser.storage.sync.get(null, function(items) {
+browser.storage.sync.get(null, function (items) {
     // Toggle button not supprted in Firefox
     if (items == undefined) {
         document.querySelector(".support-alert").innerText = `
@@ -31,21 +31,23 @@ browser.storage.sync.get(null, function(items) {
         activeBtn.checked = true;
     } else if (items.currentState === undefined) {
         browser.storage.sync.set({currentState: "ON"})
-            .then(()=>{mainImg.src="../icon/origin_on.png"});
+            .then(() => {
+                mainImg.src = "../icon/origin_on.png"
+            });
         chrome.runtime.sendMessage({
             action: 'updateIcon',
             value: "enabled"
         }).then(r => console.log(r));
         activeBtn.checked = true;
     } else if (items.currentState === "OFF") {
-        mainImg.src="../icon/origin_off.png"
+        mainImg.src = "../icon/origin_off.png"
         chrome.runtime.sendMessage({
             action: 'updateIcon',
             value: "disabled"
         }).then(r => console.log(r));
         activeBtn.checked = false;
     } else if (items.currentState === "ON") {
-        mainImg.src="../icon/origin_on.png"
+        mainImg.src = "../icon/origin_on.png"
         chrome.runtime.sendMessage({
             action: 'updateIcon',
             value: "enabled"
@@ -55,17 +57,21 @@ browser.storage.sync.get(null, function(items) {
 });
 
 
-activeBtn.onclick = function() {
+activeBtn.onclick = function () {
     if (activeBtn.checked) {
         browser.storage.sync.set({currentState: "ON"})
-            .then(()=>{mainImg.src="../icon/origin_on.png"});
+            .then(() => {
+                mainImg.src = "../icon/origin_on.png"
+            });
         chrome.runtime.sendMessage({
             action: 'updateIcon',
             value: "enabled"
         }).then(r => console.log(r));
     } else {
         browser.storage.sync.set({currentState: "OFF"})
-            .then(()=>{mainImg.src="../icon/origin_off.png"});
+            .then(() => {
+                mainImg.src = "../icon/origin_off.png"
+            });
         chrome.runtime.sendMessage({
             action: 'updateIcon',
             value: "disabled"
@@ -84,15 +90,15 @@ notifyBtn.addEventListener('click', () => {
 
 
 // 리스트 출력하기
-chrome.storage.sync.get('res')
-    .then((res) => {
-        console.log(res.res)
-        let arr = res.res;
+chrome.storage.sync.get('songs')
+    .then((data) => {
+        console.log(data);
+        let titles = data.songs.title;
+        let artists = data.songs.artist;
         let tbody = document.getElementById("tbody");
 
         // tr td 만들기
-        for (let i = 0; i < arr.length; i++) {
-            console.log(arr[i]);
+        for (let i = 0; i < 5; i++) {
             let tr = document.createElement("tr");
             let th = document.createElement("th");
             let td1 = document.createElement("td");
@@ -100,8 +106,8 @@ chrome.storage.sync.get('res')
 
             th.setAttribute('scope', "row");
             th.textContent = i.toString();
-            td1.textContent = arr[i].song_name;
-            td2.textContent = arr[i].recommend;
+            td1.textContent = titles[i];
+            td2.textContent = artists[i];
 
             tr.append(th);
             tr.append(td1);
