@@ -27,14 +27,10 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
 // storage
 chrome.runtime.onInstalled.addListener(() => {
     // 연결되었을 때 초기값 설정 및 저장
-    let arr = []
-    for (let i = 0; i < 5; i++) {
-        let data = {
-            song_name: "name" + i,
-            recommend: "recommend" + i
-        };
-        arr.push(data);
+    let data = {
+        title : ["nothing","nothing","nothing","nothing","nothing"],
+        artist: ["nothing","nothing","nothing","nothing","nothing"]
     }
 
-    chrome.storage.sync.set({res: arr}).then();
+    chrome.storage.sync.set({songs: data}).then();
 });
