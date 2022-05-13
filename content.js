@@ -23,33 +23,41 @@ console.log(content)
 // 이미지와 사진을 가지고 있다면 여기서 통신을 해서 진행해야한다.
 if (img !== null || content !== null) {
     var xhr = new XMLHttpRequest();
-    let url = "http://localhost:8000"
+    let url = "http://localhost:8000/sentiment/recommend/"
     let method = "POST"
 
-    let formData = new FormData();
 
+    let data = {}
 
     // 보낼 데이터 사전 준비
-    if (img !== null) {
-        formData.append('img', img.src);
-    }
-    if (content !== null) {
-        formData.append('content', content.innerText);
-    }
+    data.image = img == null ? "" : img.src;
+    data.content = content == null ? "" : content.innerText;
 
     // xhr setting
     xhr.onreadystatechange = () => {
         if (xhr.readyState === xhr.DONE && xhr.status === 200) {
-            console.log(xhr.responseText);
+            let songs = JSON.parse(xhr.response);// object로 변환
+            console.log(songs);
+
+            // 저장소에 저장하고 알림을 보낸다.
+            chrome.storage.sync.set({"songs": songs})
+                .then(res => {
+                    console.log("save success");
+                    makeNotify(
+                        'basic',
+                        'Recommend ' + songs['title'][0],
+                        'artist: ' + songs['artist'][0],
+                        "../icon/origin_on.png");
+                });
         }
     }
 
     xhr.open(method, url, true);
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(formData);
+    xhr.send(JSON.stringify(data));
 }
 
-// makeNotify('basic', 'Recommend ','', '')
+
 
 
 
