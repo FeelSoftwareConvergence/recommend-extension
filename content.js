@@ -1,4 +1,3 @@
-// variable
 
 // method
 function makeNotify(type, title, message, iconUrl) {
@@ -20,10 +19,26 @@ const content = document.querySelector('#react-root > section > main > div > div
 console.log(img)
 console.log(content)
 
+// if (img !== null || content !== null) {
+//     let data = {}
+//     data.image = img == null ? "" : img.src;
+//     data.content = content == null ? "" : content.innerText;
+//
+//     chrome.runtime.sendMessage('', {
+//         type: "server",
+//         options: {
+//             message : data
+//         }
+//     }).then(res=>console.log(res))
+// }
+
+
+
 // 이미지와 사진을 가지고 있다면 여기서 통신을 해서 진행해야한다.
 if (img !== null || content !== null) {
     var xhr = new XMLHttpRequest();
-    let url = "http://localhost:8000/sentiment/recommend/"
+    //let url = "https://k-net.kr/sentiment/recommend/"
+    let url = "https://cera.kro.kr/sentiment/recommend/"
     let method = "POST"
 
 
@@ -56,13 +71,6 @@ if (img !== null || content !== null) {
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(JSON.stringify(data));
 }
-
-
-
-
-
-
-
 
 
 

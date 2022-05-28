@@ -1,3 +1,5 @@
+
+
 if (typeof browser === "undefined") {
     var browser = chrome;
 }
@@ -21,6 +23,8 @@ async function makeNotify(type, title, message, iconUrl) {
 //====== 실제 동작 정의 ======
 const activeBtn = document.querySelector(".form-check-input");
 const mainImg = document.getElementById("main img");
+const tbody = document.getElementById("tbody");
+
 
 browser.storage.sync.get(null, function (items) {
     // Toggle button not supprted in Firefox
@@ -63,19 +67,26 @@ activeBtn.onclick = function () {
             .then(() => {
                 mainImg.src = "../icon/origin_on.png"
             });
+        // send message
         chrome.runtime.sendMessage({
             action: 'updateIcon',
             value: "enabled"
         }).then(r => console.log(r));
+        // display table on
+        tbody.style.display = '';
+
     } else {
         browser.storage.sync.set({currentState: "OFF"})
             .then(() => {
                 mainImg.src = "../icon/origin_off.png"
             });
+        // send message
         chrome.runtime.sendMessage({
             action: 'updateIcon',
             value: "disabled"
         }).then(r => console.log(r));
+        // table display off
+        tbody.style.display = 'none';
     }
 }
 
@@ -95,7 +106,6 @@ chrome.storage.sync.get('songs')
         console.log(data);
         let titles = data.songs.title;
         let artists = data.songs.artist;
-        let tbody = document.getElementById("tbody");
 
         // tr td 만들기
         for (let i = 0; i < 5; i++) {

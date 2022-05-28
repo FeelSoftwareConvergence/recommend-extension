@@ -5,12 +5,7 @@
   "description": "Turns the page red when you click the icon",
   "permissions": [
     "storage",
-    "notifications",
-    "scripting",
-    "activeTab"
-  ],
-  "host_permissions": [
-    "<all_urls>"
+    "notifications"
   ],
   "icons": {
     "300": "./icon/origin_on.png"
